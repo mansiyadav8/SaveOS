@@ -1,9 +1,5 @@
-
 import { useState } from "react";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
-} from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebase";
 
 function Auth() {
@@ -16,10 +12,8 @@ function Auth() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setMessage("");
-
+    setLoading(true);
     try {
-      setLoading(true);
-
       if (isSignup) {
         await createUserWithEmailAndPassword(auth, email, password);
       } else {
@@ -33,62 +27,27 @@ function Auth() {
   };
 
   return (
-    <div>
-      <h2>{isSignup ? "Create your SaveOS account" : "Welcome back"}</h2>
-
-      <form onSubmit={handleSubmit}>
-        <div>
+    <main className="auth-screen">
+      <section className="auth-card">
+        <div className="brand" style={{ padding: 0, marginBottom: 24 }}>
+          <span className="brand-mark">▣</span>
+          <span><span className="brand-name">SaveOS</span><span className="brand-caption">Autonomous Memory</span></span>
+        </div>
+        <h1>{isSignup ? "Create your account" : "Welcome back"}</h1>
+        <p>Save what inspires you. Find it when you need it.</p>
+        <form onSubmit={handleSubmit}>
           <label htmlFor="email">Email</label>
-          <br />
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
-        </div>
-
-        <br />
-
-        <div>
+          <input id="email" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
           <label htmlFor="password">Password</label>
-          <br />
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            minLength={6}
-            required
-          />
-        </div>
-
-        <br />
-
-        <button type="submit" disabled={loading}>
-          {loading
-            ? "Please wait..."
-            : isSignup
-              ? "Sign up"
-              : "Sign in"}
+          <input id="password" type="password" autoComplete={isSignup ? "new-password" : "current-password"} value={password} onChange={(event) => setPassword(event.target.value)} minLength={6} required />
+          <button className="primary-button" type="submit" disabled={loading}>{loading ? "Please wait..." : isSignup ? "Create account" : "Sign in"}</button>
+        </form>
+        {message && <p className="notice" role="alert">{message}</p>}
+        <button className="auth-switch" type="button" onClick={() => { setIsSignup(!isSignup); setMessage(""); }}>
+          {isSignup ? "Already registered? Sign in" : "New here? Create an account"}
         </button>
-      </form>
-
-      {message && <p>{message}</p>}
-
-      <button
-        type="button"
-        onClick={() => {
-          setIsSignup(!isSignup);
-          setMessage("");
-        }}
-      >
-        {isSignup
-          ? "Already registered? Sign in"
-          : "New here? Create an account"}
-      </button>
-    </div>
+      </section>
+    </main>
   );
 }
 
